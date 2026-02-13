@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Breakfast Menu</title>
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      background: #fafafa;
+      padding: 28px;
+      text-align: center;
+    }
+    .card {
+      max-width: 520px;
+      margin: 0 auto;
+      background: #fff;
+      border-radius: 14px;
+      padding: 22px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+      text-align: left;
+    }
+    h2 { margin: 0 0 6px; text-align: center; }
+    p { margin: 6px 0 14px; text-align: center; color: #444; }
+    .section-title { margin: 18px 0 8px; font-weight: 700; }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      margin: 10px 0;
+      font-size: 16px;
+      border-radius: 10px;
+      border: 1px solid #ddd;
+      background: #fff;
+      cursor: pointer;
+      text-align: left;
+    }
+    button:hover { background: #f3f3f3; }
+    button:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+      background: #f6f6f6;
+    }
+
+    /* Make the opening page button centred and a bit more “hero” */
+    .hero-btn {
+      text-align: center;
+      font-weight: 600;
+    }
+
+    .note {
+      margin-top: 12px;
+      padding: 12px;
+      border-radius: 10px;
+      background: #fff7d6;
+      border: 1px solid #f1e2a5;
+      color: #333;
+      display: none;
+    }
+    .footer {
+      margin-top: 14px;
+      font-size: 12px;
+      color: #666;
+      text-align: center;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="card" id="app">
+    <!-- Opening page gets injected here -->
+  </div>
+
+<script>
+  const state = {
+    main: null,
+    side: null,
+    drink: null,
+    mainLocked: false,
+    sideLocked: false,
+    drinkLocked: false,
+  };
+
+  function renderWelcome() {
+    document.getElementById("app").innerHTML = `
+      <h2>Welcome to Miles’s Anniversary Restaurant, open 1/365</h2>
+      <p>The perfect foreplay for skiing</p>
+      <button class="hero-btn" id="enterBtn">Enter restaurant →</button>
+      <div class="footer"></div>
+    `;
+
+    document.getElementById("enterBtn").addEventListener("click", renderMenu);
+  }
+
+  function renderMenu() {
+    document.getElementById("app").innerHTML = `
+      <h2>🏔️ Airbnb Breakfast Menu</h2>
+      <p>Please select your order</p>
+
+      <div class="section-title">Main</div>
+      <button id="main_good">🥯 Bagels, eggs, avocado</button>
+      <button id="main_bad">🥣 GF granola and yoghurt</button>
+
+      <div class="section-title">Sides</div>
+      <button id="side_good">🍓 Berries, banana</button>
+      <button id="side_bad">🍯 Vanilla berry chia jam, slow simmered</button>
+
+      <div class="section-title">Vitamin C-ki or Vitamin Tea?</div>
+      <button id="drink_good">🧃 Orange juice</button>
+      <button id="drink_bad">🍵 Peppermint tea</button>
+
+      <div class="note" id="note"></div>
+
+      <div class="footer">10% surcharge applied to all orders.</div>
+    `;
+
+    const note = document.getElementById("note");
+
+    function showNote(msg) {
+      note.style.display = "block";
+      note.innerHTML = msg;
+    }
+
+    function maybeFinish() {
+      if (state.main && state.side && state.drink) {
+        document.getElementById("app").innerHTML = `
+          <h2>✅ Excellent choice</h2>
+          <p>You have chosen</p>
+          <div style="padding:14px;border:1px solid #eee;border-radius:12px;background:#fafafa;line-height:1.6;">
+            <div><strong>Main</strong>: ${state.main}</div>
+            <div><strong>Sides</strong>: ${state.side}</div>
+            <div><strong>Drinks</strong>: ${state.drink}</div>
+          </div>
+          <p style="margin-top:14px;">
+            Happy anniversary, may you shred the slopes like you shredded my confidence on Hinge.
+          </p>
+        `;
+      }
+    }
+
+    // Main
+    const mainGood = document.getElementById("main_good");
+    const mainBad = document.getElementById("main_bad");
+
+    mainGood.addEventListener("click", () => {
+      if (state.mainLocked) return;
+      state.main = "Bagels, eggs, avocado";
+      state.mainLocked = true;
+      mainGood.disabled = true;
+      mainBad.disabled = true;
+      showNote("Excellent choice, very demure, very mindful.");
+      maybeFinish();
+    });
+
+    mainBad.addEventListener("click", () => {
+      if (state.mainLocked) return;
+      showNote("Sorry, the kitchen is out of this item, please choose again.");
+      mainBad.disabled = true;
+    });
+
+    // Sides
+    const sideGood = document.getElementById("side_good");
+    const sideBad = document.getElementById("side_bad");
+
+    sideGood.addEventListener("click", () => {
+      if (state.sideLocked) return;
+      state.side = "Berries, banana";
+      state.sideLocked = true;
+      sideGood.disabled = true;
+      sideBad.disabled = true;
+      showNote("Sides locked in. Fruit + fibre is key to shredding the slopes.");
+      maybeFinish();
+    });
+
+    sideBad.addEventListener("click", () => {
+      if (state.sideLocked) return;
+      showNote("Sorry, the kitchen is out of this item, please choose again.");
+      sideBad.disabled = true;
+    });
+
+    // Drinks
+    const drinkGood = document.getElementById("drink_good");
+    const drinkBad = document.getElementById("drink_bad");
+
+    drinkGood.addEventListener("click", () => {
+      if (state.drinkLocked) return;
+      state.drink = "Orange juice";
+      state.drinkLocked = true;
+      drinkGood.disabled = true;
+      drinkBad.disabled = true;
+      showNote("Excellent choice. Hydration is key for your ski vacation.");
+      maybeFinish();
+    });
+
+    drinkBad.addEventListener("click", () => {
+      if (state.drinkLocked) return;
+      showNote("Sorry, the kitchen is out of this item, please choose again.");
+      drinkBad.disabled = true;
+    });
+  }
+
+  // Start on opening page
+  renderWelcome();
+</script>
+</body>
+</html>
